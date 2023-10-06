@@ -1,0 +1,6 @@
+#Conways Game of life
+## made with raylib!
+
+use make to compile
+
+To edit the size of squares use the defines in main.c0
