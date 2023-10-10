@@ -3,21 +3,20 @@
 #include <unistd.h>
 #include <raylib.h>
 
-#define SQUARESIZE 1
-#define HEIGHT 1080
-#define WIDTH 1920
+#define SQUARESIZE 2
+#define HEIGHT 540
+#define WIDTH 960
 
-struct GameBoard {
+typedef struct GameBoards {
     int (*current)[HEIGHT][WIDTH];
     int (*previous)[HEIGHT][WIDTH];
-};
+} GameBoard;
 
-struct GameBoard initGameBoard(){
-    struct GameBoard MainBoard;
+GameBoard initGameBoard(){
+    GameBoard MainBoard;
     
     MainBoard.current = malloc((HEIGHT * WIDTH) * sizeof(int));
     MainBoard.previous = malloc((HEIGHT * WIDTH) * sizeof(int));
-
 
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
@@ -29,7 +28,7 @@ struct GameBoard initGameBoard(){
     return MainBoard;
 }
 
-void printBoard(struct GameBoard *board, int genNumber){
+void printBoard(GameBoard *board, int genNumber){
     printf("Generation %d:\n", genNumber+1);
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
@@ -43,13 +42,13 @@ void printBoard(struct GameBoard *board, int genNumber){
 
 }
 
-void swapBoard(struct GameBoard *board){
+void swapBoard(GameBoard *board){
     int (*tmp)[HEIGHT][WIDTH] = board->current;
     board->current = board->previous;
     board->previous = tmp;
 }
 
-int countNeighbors(struct GameBoard *board, int x, int y){
+int countNeighbors(GameBoard *board, int x, int y){
     int sum = 0;
     int col, row;
     for (int i = -1; i < 2; i++) {
@@ -63,7 +62,7 @@ int countNeighbors(struct GameBoard *board, int x, int y){
     sum -= (*board->previous)[x][y];
     return sum;
 }
-void playGeneration(struct GameBoard *board){
+void playGeneration(GameBoard *board){
     int state, neighbors = 0;
 
     swapBoard(board);
@@ -83,19 +82,20 @@ void playGeneration(struct GameBoard *board){
     }
 }
 
-void freeGameBoard (struct GameBoard *board){
+void freeGameBoard (GameBoard *board){
     free(board->current);
     free(board->previous);
 }
+
 int main(){
     const int screenWidth = WIDTH*SQUARESIZE;
-    const int screenHeight = HEIGHT*SQUARESIZE + 30;
+    const int screenHeight = HEIGHT*SQUARESIZE;
  
     InitWindow(screenWidth, screenHeight, "Conway's game of life");
     SetTargetFPS(4);
 
-    struct GameBoard gameBoard = initGameBoard();
-    struct Color color =  WHITE;
+    GameBoard gameBoard = initGameBoard();
+    Color color =  WHITE;
     int generation = 1;
 
     while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -104,18 +104,20 @@ int main(){
         BeginDrawing();
 
             ClearBackground(RAYWHITE);
-            DrawText(TextFormat("Generation: %d", generation), 0, 0, 30, BLUE);
 
             for (int y = 0; y < HEIGHT; y++) {
                 for (int x = 0; x < WIDTH; x++) {
                     if((*gameBoard.current)[y][x] == 1)
-                        color = BLUE;
+                        color = BLACK;
                     else
                         color = WHITE;
-                    DrawRectangle(x * SQUARESIZE, y * SQUARESIZE + 30, SQUARESIZE, SQUARESIZE, color);
+                    DrawRectangle(x * SQUARESIZE, y * SQUARESIZE, SQUARESIZE, SQUARESIZE, color);
                 }
             }
-
+            
+            DrawRectangle(0, 0, 270, 30, (Color){ 255, 161, 0, 190 });
+            DrawText(TextFormat("Generation: %d", generation), 0, 0, 30, BLUE);
+        
         EndDrawing();
         //printBoard(&gameBoard, 0);
         generation++;
