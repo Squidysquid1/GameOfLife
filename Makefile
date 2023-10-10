@@ -4,7 +4,7 @@ CC = gcc
 # compiler flags:
 #  -g    adds debugging information to the executable file
 #  -Wall turns on most, but not all, compiler warnings
-CFLAGS  = -g -Wall -lraylib -lglfw -lGL -lopenal -lm -pthread -ldl
+CFLAGS  = -g -Wall -lraylib
 
 # the build target executable:
 TARGET = main
